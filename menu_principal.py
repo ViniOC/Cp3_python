@@ -19,7 +19,9 @@ def menu_pizza():
         
         if opcao == 1:
             sabor = input("Sabor da Pizza: ")
+            sabor.lower()
             tamanho = input("Tamanho da Pizza(P, M ou G): ")
+            tamanho.upper()
             obss = input("Alguma observação ?s/n ")
             obss.lower()
             if obss == "s":
@@ -32,6 +34,7 @@ def menu_pizza():
             negocio.banco.lista_pizza()
         elif opcao == 3:
             nome = input("informe o sabor da pizza que deseja buscar: ")
+            nome.lower()
             negocio.banco.seleciona_pizza(nome)
         elif opcao == 4: 
             negocio.banco.atualiza_pizza()

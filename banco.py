@@ -126,7 +126,9 @@ def atualiza_pizza():
     sabor = input("Informe o novo sabor da pizza: ")
     tamanho = input("Informe o novo tamanho da pizza (P, M ou G): ")
     obs = input("Informe a nova observação (deixe em branco se não houver alteração): ")
-
+    sabor.lower()
+    tamanho.upper()
+    obs.lower()
     # Criar o dicionário com os dados fornecidos
     pizza = {
         'id': id_pizza,
