@@ -14,12 +14,13 @@ def lista_pizza():
         with con.cursor() as cur:
             cur.execute(sql)
             dado = cur.fetchall()
-            if not dado:
-                print("Nenhuma Pizza cadastrada.")
-            else:
-                print("Pizzas cadastradas:")
-                for dados in dado:
-                    print(f"ID: {dados[0]}, Sabor: {dados[1]}, Tamanho: {dados[2]}, Observação: {dados[3]}")
+            # if not dado:
+            #     print("Nenhuma Pizza cadastrada.")
+            # else:
+            #     print("Pizzas cadastradas:")
+            #     for dados in dado:
+            #         print(f"ID: {dados[0]}, Sabor: {dados[1]}, Tamanho: {dados[2]}, Observação: {dados[3]}")
+            return dado
 
 
 
@@ -30,13 +31,14 @@ def lista_venda_pizza():
         with con.cursor() as cur:
             cur.execute(sql)
             dado = cur.fetchall()
-            if not dado:
-                print("Nenhuma venda cadastrada.")
-            else:
-                print("Vendas cadastradas:")
-                for dados in dado:
-                    valor = dados[3] if dados[3] is not None else 0.00  # Substituir None por 0.00
-                    print(f"ID: {dados[0]}, ID Pizza: {dados[1]}, Descrição: {dados[2]}, Valor: R${valor:.2f}, Data: {dados[4]}")
+            # if not dado:
+            #     print("Nenhuma venda cadastrada.")
+            # else:
+            #     print("Vendas cadastradas:")
+            #     for dados in dado:
+            #         valor = dados[3] if dados[3] is not None else 0.00  # Substituir None por 0.00
+            #         print(f"ID: {dados[0]}, ID Pizza: {dados[1]}, Descrição: {dados[2]}, Valor: R${valor:.2f}, Data: {dados[4]}")
+            return dado
 
 
 def seleciona_pizza(sabor: str) -> dict:
