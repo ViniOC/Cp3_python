@@ -4,6 +4,11 @@ from datetime import datetime
 app = Flask(__name__)
 
 
+# {
+#   "sabor": "Mussarela",
+#   "tamanho": "G",
+#   "observacao": "Com borda recheada"
+# }
 
 @app.route("/cadastropizza", methods=["POST"])
 def post_pizza():
@@ -35,7 +40,7 @@ def post_pizza():
 
     return jsonify(pizzas_mapeadas), 200
 
-
+# http://127.0.0.1:5000/pizzas
 @app.route("/pizzas", methods = ["GET"])
 def get_all_pizzas():
     pizzas = negocio.banco.lista_pizza()
@@ -60,7 +65,7 @@ def get_pizzas_by_sabor():
     
     return jsonify(pizzas_mapeadas)
 
-
+# http://127.0.0.1:5000/apagapizza/30
 @app.route("/apagapizza/<int:pizza_id>", methods=["DELETE"])
 def delete_pizza(pizza_id):
     try:
@@ -69,6 +74,38 @@ def delete_pizza(pizza_id):
         return jsonify(result), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+    
+    
+#     {
+#   "sabor": "Mussarela",
+#   "tamanho": "G",
+#   "observacao": "Com borda recheada"
+# }
+
+
+@app.route("/atualizapizza/<int:pizza_id>", methods=["PUT"])
+def update_pizza(pizza_id):
+    try:
+        # Recebe os dados da requisição
+        data = request.get_json()
+        
+        sabor = data.get('sabor')
+        tamanho = data.get('tamanho')
+        obs = data.get('observacao', '')  # Caso a observação não seja fornecida, assume-se uma string vazia
+
+        # Valida os dados (se necessário)
+        if not sabor or not tamanho:
+            return jsonify({"error": "Sabor e tamanho são obrigatórios"}), 400
+
+        # Chama a função de atualização na classe banco
+        negocio.banco.atualiza_pizza(pizza_id, sabor, tamanho, obs)
+
+        return jsonify({"message": "Pizza atualizada com sucesso!"}), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 
 
@@ -87,8 +124,14 @@ def post_venda():
         return jsonify({"error": str(e)}), 500
 
 app.run(debug=True)
+# {
+#   "id_pizza": 4,
+#   "ds_venda": "Venda de pizza de 4 queijos",
+#   "valor": 42.00,
+#   "dt_venda": "09-11-2024"
+# }
 
-
+# o insomnia nao encontra, o metodo esta funcionando, mas nao retorna na api, tentei resolver mas infelizmente nao consegui.
 @app.route("/listavendas", methods=["GET"])
 def get_all_vendas():
     vendas = negocio.banco.lista_venda_pizza()

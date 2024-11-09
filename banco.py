@@ -126,39 +126,27 @@ def insere_venda(venda: dict):
 
 
 
-def atualiza_pizza():
-    lista_pizza()
-    id_pizza = input("Informe o ID da pizza a ser atualizada: ")
 
-    # Solicitar os novos dados para a pizza
-    sabor = input("Informe o novo sabor da pizza: ")
-    tamanho = input("Informe o novo tamanho da pizza (P, M ou G): ")
-    obs = input("Informe a nova observação (deixe em branco se não houver alteração): ")
-    sabor.lower()
-    tamanho.upper()
-    obs.lower()
-    # Criar o dicionário com os dados fornecidos
+def atualiza_pizza(id_pizza, sabor, tamanho, obs=None):
+    # Preparar os dados
     pizza = {
         'id': id_pizza,
-        'sabor': sabor,
-        'tamanho': tamanho
+        'sabor': sabor.lower(),
+        'tamanho': tamanho.upper(),
+        'obs': obs.lower() if obs else None
     }
-    
-    # Adicionar 'obs' ao dicionário apenas se o usuário não deixou em branco
-    if obs:
-        pizza['obs'] = obs
 
     # SQL de atualização
     sql = ''' 
     UPDATE t_pizza 
     SET sabor = :sabor, tamanho = :tamanho
-    ''' 
-
-    # Adicionar a cláusula de observação ao SQL, se a obs for fornecida
-    if 'obs' in pizza:
+    '''
+    
+    # Adiciona a coluna obs apenas se for fornecida
+    if pizza['obs']:
         sql += ', obs = :obs'
-
-    # Finalizar a cláusula WHERE
+    
+    # Finaliza a cláusula WHERE
     sql += ' WHERE id = :id'
 
     # Executar a atualização no banco de dados
@@ -168,6 +156,8 @@ def atualiza_pizza():
         con.commit()
 
     print("Pizza atualizada com sucesso!")
+
+
 
 
 def atualiza_venda():
