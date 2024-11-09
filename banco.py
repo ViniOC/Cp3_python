@@ -41,17 +41,16 @@ def lista_venda_pizza():
             return dado
 
 
-def seleciona_pizza(sabor: str) -> dict:
-    sql = ''' select * from t_pizza where sabor = :sabor '''
+def seleciona_pizza(sabor: str):
+    sql = '''
+    SELECT id, sabor, tamanho, obs FROM t_pizza WHERE sabor LIKE :sabor
+    '''
+    
     with get_connection() as con:
-        with con.cursor() as cur:   
-            cur.execute(sql, {'sabor': sabor})
-            dado = cur.fetchone()
-            if not dado:
-                print("Nenhuma Pizza cadastrada.")
-            else:
-                print("Pizza cadastrada:")
-                print(f"ID: {dado[0]}, Sabor: {dado[1]}, Tamanho: {dado[2]}, Observação: {dado[3]}")
+        with con.cursor() as cur:
+            cur.execute(sql, {'sabor': f'%{sabor}%'})  # Usa o operador LIKE para buscar por sabores que contenham o termo
+            return cur.fetchall()
+
 
 
 def seleciona_venda(id: int) -> dict:
@@ -97,8 +96,8 @@ def insere_pizza(pizza: dict):
 
 def insere_venda(venda: dict):
     sql = ''' 
-    INSERT INTO t_venda_pizza (id, id_pizza, ds_venda, valor, dt_venda) 
-    VALUES (:id, :id_pizza, :ds_venda, :valor, TO_DATE(:dt_venda, 'DD-MM-YYYY'))
+    INSERT INTO t_venda_pizza (id_pizza, ds_venda, valor, dt_venda) 
+    VALUES (:id_pizza, :ds_venda, :valor, TO_DATE(:dt_venda, 'DD-MM-YYYY'))
     '''
     
     with get_connection() as con:
@@ -110,12 +109,19 @@ def insere_venda(venda: dict):
             # Atribui o novo ID ao dicionário de venda
             venda['id'] = new_id
             
-            # Executa a inserção com o novo ID e data formatada
-            cur.execute(sql, venda)
+            # Executa a inserção (o ID não precisa estar na SQL)
+            cur.execute(sql, {
+                "id_pizza": venda["id_pizza"],
+                "ds_venda": venda["ds_venda"],
+                "valor": venda["valor"],
+                "dt_venda": venda["dt_venda"]  # Certifique-se de que a data está no formato 'DD-MM-YYYY'
+            })
         
         con.commit()
     
+    # Retorna o dicionário de venda com o novo ID atribuído
     return venda
+
 
 
 
@@ -196,3 +202,17 @@ def atualiza_venda():
         con.commit()
 
     print("Venda atualizada com sucesso!")
+
+def delete_pizza(pizza_id: int):
+    sql = '''
+    DELETE FROM t_pizza WHERE id = :id
+    '''
+    
+    with get_connection() as con:
+        with con.cursor() as cur:
+            # Executa o comando de exclusão com o id fornecido
+            cur.execute(sql, {'id': pizza_id})
+        
+        con.commit()
+    
+    return {'message': f'Pizza com ID {pizza_id} deletada com sucesso'}
